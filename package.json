@@ -1,0 +1,22 @@
+{
+  "name": "my-puppeteer-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "prettier": {
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "all",
+    "printWidth": 150,
+    "semi": true
+  },
+  "dependencies": {
+    "puppeteer": "^22.7.1"
+  }
+}
