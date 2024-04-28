@@ -594,3 +594,150 @@
     at runNextTicks (node:internal/process/task_queues:60:5)
     at process.processImmediate (node:internal/timers:447:9)
 2024-04-27T09:36:08.904Z: running application for [Whitby, ON Canada]
+2024-04-28T17:26:11.682Z: Started!
+2024-04-28T17:26:12.266Z: reject all permissions!
+2024-04-28T17:26:12.267Z: using cookies from local-disk from previous runs
+2024-04-28T17:26:18.123Z: checking for login
+2024-04-28T17:26:18.132Z: need to login!
+2024-04-28T17:26:28.290Z: click on consent btn
+2024-04-28T17:26:28.314Z: filling email...
+2024-04-28T17:26:30.882Z: filling password...
+2024-04-28T17:26:37.579Z: TargetCloseError: Waiting for selector `input[name="pin"]` failed: Protocol error (Runtime.callFunctionOn): Target closed
+    at CallbackRegistry.clear (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/common/CallbackRegistry.js:72:36)
+    at CdpCDPSession._onClosed (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/CDPSession.js:101:25)
+    at Connection.onMessage (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/Connection.js:121:25)
+    at Immediate.<anonymous> (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/node/NodeWebSocketTransport.js:43:36)
+    at process.processImmediate (node:internal/timers:476:21) {
+  cause: ProtocolError
+      at <instance_members_initializer> (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/common/CallbackRegistry.js:93:14)
+      at new Callback (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/common/CallbackRegistry.js:97:16)
+      at CallbackRegistry.create (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/common/CallbackRegistry.js:22:26)
+      at Connection._rawSend (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/Connection.js:80:26)
+      at CdpCDPSession.send (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/CDPSession.js:66:33)
+      at #evaluate (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/ExecutionContext.js:202:50)
+      at async ExecutionContext.evaluateHandle (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/ExecutionContext.js:169:16)
+      at async IsolatedWorld.evaluateHandle (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/IsolatedWorld.js:116:16)
+      at async CdpJSHandle.evaluateHandle (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/api/JSHandle.js:150:20)
+      at async WaitTask.rerun (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/common/WaitTask.js:103:28)
+}
+2024-04-28T17:27:45.056Z: Started!
+2024-04-28T17:27:45.630Z: reject all permissions!
+2024-04-28T17:27:45.630Z: using cookies from local-disk from previous runs
+2024-04-28T17:27:51.795Z: checking for login
+2024-04-28T17:27:51.811Z: need to login!
+2024-04-28T17:28:01.131Z: click on consent btn
+2024-04-28T17:28:01.156Z: filling email...
+2024-04-28T17:28:03.746Z: filling password...
+2024-04-28T17:28:33.750Z: TimeoutError: Waiting for selector `input[name="pin"]` failed: Waiting failed: 30000ms exceeded
+    at new WaitTask (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/common/WaitTask.js:50:34)
+    at IsolatedWorld.waitForFunction (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/api/Realm.js:25:26)
+    at PQueryHandler.waitFor (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/common/QueryHandler.js:170:95)
+    at async CdpFrame.waitForSelector (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/api/Frame.js:468:21)
+    at async CdpPage.waitForSelector (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/api/Page.js:1309:20)
+    at async checkAndLogin (/Users/panth977/Dev/Experement/my-puppeteer-bot/index.js:193:21)
+    at async main (/Users/panth977/Dev/Experement/my-puppeteer-bot/index.js:241:5)
+2024-04-28T17:28:33.752Z: Closing browser...
+2024-04-28T17:37:24.903Z: Started!
+2024-04-28T17:37:25.482Z: reject all permissions!
+2024-04-28T17:37:25.482Z: using cookies from local-disk from previous runs
+2024-04-28T17:37:31.615Z: checking for login
+2024-04-28T17:37:31.629Z: need to login!
+2024-04-28T17:37:40.891Z: click on consent btn
+2024-04-28T17:37:40.914Z: filling email...
+2024-04-28T17:37:43.493Z: filling password...
+2024-04-28T17:38:06.926Z: selecting 2fa method...
+2024-04-28T17:38:08.980Z: filling otp...
+2024-04-28T17:39:02.881Z: waiting for login success
+2024-04-28T17:39:13.725Z: storing cookies to local-disk for future runs
+2024-04-28T17:39:13.727Z: logged in successfully
+2024-04-28T17:39:13.729Z: running application for [Scarborough, ON Canada]
+2024-04-28T17:39:15.728Z: running application for [Barrhaven, ON Canada]
+2024-04-28T17:39:17.728Z: running application for [Whitby, ON Canada]
+2024-04-28T17:39:19.728Z: running application for [Belleville, ON Canada]
+2024-04-28T17:39:24.207Z: failed to succeed for [Scarborough, ON Canada] application
+2024-04-28T17:39:24.217Z: site msg for Scarborough, ON Canada :: Sorry, we do not have a shift available that matches your preferences. Check back or sign up for alerts and be notified when new shifts are available. Text MOREJOBS to 77088 for text alerts, or sign up for email alerts
+2024-04-28T17:39:24.524Z: failed to succeed for [Scarborough, ON Canada] application
+2024-04-28T17:39:24.525Z: Error: Attempted to use detached Frame '341D9DC789D225B1187463E934BCE67E'.
+    at CdpFrame.<anonymous> (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/util/decorators.js:96:23)
+    at CdpPage.evaluate (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/api/Page.js:823:43)
+    at runForApplication (/Users/panth977/Dev/Experement/my-puppeteer-bot/index.js:133:18)
+    at async main (/Users/panth977/Dev/Experement/my-puppeteer-bot/index.js:243:5)
+2024-04-28T17:39:24.525Z: Error: Protocol error: Connection closed. Most likely the page has been closed.
+    at assert (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/util/assert.js:18:15)
+    at CdpPage.close (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/Page.js:864:32)
+    at runForApplication (/Users/panth977/Dev/Experement/my-puppeteer-bot/index.js:150:16)
+    at async main (/Users/panth977/Dev/Experement/my-puppeteer-bot/index.js:243:5)
+2024-04-28T17:39:24.525Z: Closing browser...
+2024-04-28T17:39:24.529Z: failed to succeed for [Belleville, ON Canada] application
+2024-04-28T17:39:24.529Z: TargetCloseError: Protocol error (Runtime.callFunctionOn): Session closed. Most likely the page has been closed.
+    at CdpCDPSession.send (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/CDPSession.js:64:35)
+    at #evaluate (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/ExecutionContext.js:202:50)
+    at ExecutionContext.evaluate (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/ExecutionContext.js:117:36)
+    at IsolatedWorld.evaluate (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/IsolatedWorld.js:124:30)
+    at CdpFrame.evaluate (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/api/Frame.js:342:43)
+    at CdpFrame.<anonymous> (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/util/decorators.js:98:27)
+    at CdpPage.evaluate (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/api/Page.js:823:43)
+    at runForApplication (/Users/panth977/Dev/Experement/my-puppeteer-bot/index.js:133:18)
+    at runNextTicks (node:internal/process/task_queues:60:5)
+    at process.processImmediate (node:internal/timers:447:9)
+2024-04-28T17:39:24.530Z: failed to succeed for [Whitby, ON Canada] application
+2024-04-28T17:39:24.530Z: TargetCloseError: Protocol error (Runtime.callFunctionOn): Session closed. Most likely the page has been closed.
+    at CdpCDPSession.send (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/CDPSession.js:64:35)
+    at #evaluate (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/ExecutionContext.js:202:50)
+    at ExecutionContext.evaluate (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/ExecutionContext.js:117:36)
+    at IsolatedWorld.evaluate (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/IsolatedWorld.js:124:30)
+    at CdpFrame.evaluate (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/api/Frame.js:342:43)
+    at CdpFrame.<anonymous> (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/util/decorators.js:98:27)
+    at CdpPage.evaluate (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/api/Page.js:823:43)
+    at runForApplication (/Users/panth977/Dev/Experement/my-puppeteer-bot/index.js:133:18)
+    at runNextTicks (node:internal/process/task_queues:60:5)
+    at process.processImmediate (node:internal/timers:447:9)
+2024-04-28T17:39:24.531Z: failed to succeed for [Barrhaven, ON Canada] application
+2024-04-28T17:39:24.531Z: TargetCloseError: Protocol error (Runtime.callFunctionOn): Session closed. Most likely the page has been closed.
+    at CdpCDPSession.send (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/CDPSession.js:64:35)
+    at #evaluate (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/ExecutionContext.js:202:50)
+    at ExecutionContext.evaluate (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/ExecutionContext.js:117:36)
+    at IsolatedWorld.evaluate (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/cdp/IsolatedWorld.js:124:30)
+    at CdpFrame.evaluate (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/api/Frame.js:342:43)
+    at CdpFrame.<anonymous> (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/util/decorators.js:98:27)
+    at CdpPage.evaluate (/Users/panth977/Dev/Experement/my-puppeteer-bot/node_modules/puppeteer-core/lib/cjs/puppeteer/api/Page.js:823:43)
+    at runForApplication (/Users/panth977/Dev/Experement/my-puppeteer-bot/index.js:133:18)
+    at runNextTicks (node:internal/process/task_queues:60:5)
+    at process.processImmediate (node:internal/timers:447:9)
+2024-04-28T17:41:00.611Z: Started!
+2024-04-28T17:41:01.186Z: reject all permissions!
+2024-04-28T17:41:01.186Z: using cookies from local-disk from previous runs
+2024-04-28T17:41:09.064Z: checking for login
+2024-04-28T17:41:09.084Z: Cookies login was successful.
+2024-04-28T17:41:09.086Z: running application for [Scarborough, ON Canada]
+2024-04-28T17:41:11.084Z: running application for [Barrhaven, ON Canada]
+2024-04-28T17:41:13.086Z: running application for [Whitby, ON Canada]
+2024-04-28T17:41:15.086Z: running application for [Belleville, ON Canada]
+2024-04-28T17:41:21.262Z: failed to succeed for [Barrhaven, ON Canada] application
+2024-04-28T17:41:21.271Z: site msg for Barrhaven, ON Canada :: Sorry, we do not have a shift available that matches your preferences. Check back or sign up for alerts and be notified when new shifts are available. Text MOREJOBS to 77088 for text alerts, or sign up for email alerts
+2024-04-28T17:41:22.894Z: failed to succeed for [Whitby, ON Canada] application
+2024-04-28T17:41:22.906Z: site msg for Whitby, ON Canada :: Sorry, we do not have a shift available that matches your preferences. Check back or sign up for alerts and be notified when new shifts are available. Text MOREJOBS to 77088 for text alerts, or sign up for email alerts
+2024-04-28T17:41:24.768Z: failed to succeed for [Belleville, ON Canada] application
+2024-04-28T17:41:24.779Z: site msg for Belleville, ON Canada :: Sorry, we do not have a shift available that matches your preferences. Check back or sign up for alerts and be notified when new shifts are available. Text MOREJOBS to 77088 for text alerts, or sign up for email alerts
+2024-04-28T17:41:25.328Z: failed to succeed for [Scarborough, ON Canada] application
+2024-04-28T17:41:25.343Z: site msg for Scarborough, ON Canada :: Sorry, we do not have a shift available that matches your preferences. Check back or sign up for alerts and be notified when new shifts are available. Text MOREJOBS to 77088 for text alerts, or sign up for email alerts
+2024-04-28T17:41:31.107Z: failed to succeed for [Barrhaven, ON Canada] application
+2024-04-28T17:41:31.118Z: site msg for Barrhaven, ON Canada :: Sorry, we do not have a shift available that matches your preferences. Check back or sign up for alerts and be notified when new shifts are available. Text MOREJOBS to 77088 for text alerts, or sign up for email alerts
+2024-04-28T17:41:32.673Z: failed to succeed for [Whitby, ON Canada] application
+2024-04-28T17:41:32.681Z: site msg for Whitby, ON Canada :: Sorry, we do not have a shift available that matches your preferences. Check back or sign up for alerts and be notified when new shifts are available. Text MOREJOBS to 77088 for text alerts, or sign up for email alerts
+2024-04-28T17:41:34.693Z: failed to succeed for [Belleville, ON Canada] application
+2024-04-28T17:41:34.699Z: site msg for Belleville, ON Canada :: Sorry, we do not have a shift available that matches your preferences. Check back or sign up for alerts and be notified when new shifts are available. Text MOREJOBS to 77088 for text alerts, or sign up for email alerts
+2024-04-28T17:41:35.303Z: failed to succeed for [Scarborough, ON Canada] application
+2024-04-28T17:41:35.313Z: site msg for Scarborough, ON Canada :: Sorry, we do not have a shift available that matches your preferences. Check back or sign up for alerts and be notified when new shifts are available. Text MOREJOBS to 77088 for text alerts, or sign up for email alerts
+2024-04-28T17:41:41.112Z: failed to succeed for [Barrhaven, ON Canada] application
+2024-04-28T17:41:41.120Z: site msg for Barrhaven, ON Canada :: Sorry, we do not have a shift available that matches your preferences. Check back or sign up for alerts and be notified when new shifts are available. Text MOREJOBS to 77088 for text alerts, or sign up for email alerts
+2024-04-28T17:41:42.447Z: failed to succeed for [Whitby, ON Canada] application
+2024-04-28T17:41:42.453Z: site msg for Whitby, ON Canada :: Sorry, we do not have a shift available that matches your preferences. Check back or sign up for alerts and be notified when new shifts are available. Text MOREJOBS to 77088 for text alerts, or sign up for email alerts
+2024-04-28T17:41:44.560Z: failed to succeed for [Belleville, ON Canada] application
+2024-04-28T17:41:44.571Z: site msg for Belleville, ON Canada :: Sorry, we do not have a shift available that matches your preferences. Check back or sign up for alerts and be notified when new shifts are available. Text MOREJOBS to 77088 for text alerts, or sign up for email alerts
+2024-04-28T17:41:45.119Z: failed to succeed for [Scarborough, ON Canada] application
+2024-04-28T17:41:45.127Z: site msg for Scarborough, ON Canada :: Sorry, we do not have a shift available that matches your preferences. Check back or sign up for alerts and be notified when new shifts are available. Text MOREJOBS to 77088 for text alerts, or sign up for email alerts
+2024-04-28T17:41:50.947Z: failed to succeed for [Barrhaven, ON Canada] application
+2024-04-28T17:41:50.952Z: site msg for Barrhaven, ON Canada :: Sorry, we do not have a shift available that matches your preferences. Check back or sign up for alerts and be notified when new shifts are available. Text MOREJOBS to 77088 for text alerts, or sign up for email alerts
+2024-04-28T17:41:52.303Z: failed to succeed for [Whitby, ON Canada] application
+2024-04-28T17:41:52.309Z: site msg for Whitby, ON Canada :: Sorry, we do not have a shift available that matches your preferences. Check back or sign up for alerts and be notified when new shifts are available. Text MOREJOBS to 77088 for text alerts, or sign up for email alerts

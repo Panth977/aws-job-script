@@ -9,6 +9,8 @@ const cookiesPath = path.join(__dirname, 'cookies.json');
 const logPath = path.join(__dirname, 'debug.log');
 const initLink = 'https://hvr-amazon.my.site.com/Dashboard?setlang=en_US';
 const loginLink = 'https://hiring.amazon.ca/app#/login';
+const jobSearch = 'https://hiring.amazon.ca/app#/jobSearch';
+
 const applicationLinks = {
   'Scarborough, ON Canada': 'https://hvr-amazon.my.site.com/ApplicationShiftSelect?appid=a014U00002wfH7SQAU',
   'Barrhaven, ON Canada': 'https://hvr-amazon.my.site.com/ApplicationShiftSelect?appid=a014U00002wfbWWQAY',
@@ -20,6 +22,9 @@ const credentials = {
   password: '293125',
 };
 const refreshSpeedSec = 8;
+
+// - ***** - - ***** - - ***** - - ***** - - ***** - //
+
 $log: {
   const logFile = fs.createWriteStream(logPath, { flags: 'a' });
   function formatArgs(args) {
@@ -63,7 +68,6 @@ async function questionClient(question) {
 
 /**
  * @param {puppeteer.Page} page
- * @returns
  */
 async function CookiesLocallyToPage(page) {
   console.log('using cookies from local-disk from previous runs');
@@ -71,6 +75,7 @@ async function CookiesLocallyToPage(page) {
   const cookies = JSON.parse(fs.readFileSync(cookiesPath).toString());
   await page.setCookie(...cookies);
 }
+
 /**
  *
  * @param {puppeteer.Page} page
@@ -80,9 +85,11 @@ async function CookiesPageToLocally(page) {
   const cookies = await page.cookies();
   fs.writeFileSync(cookiesPath, JSON.stringify(cookies, null, '\t'));
 }
+
 function waitForTimeout(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
+
 /**
  * @template {Record<string, Promise<any>>} O
  * @param {O} obj
@@ -96,18 +103,21 @@ function firstResolve(obj) {
  *
  * @param {puppeteer.Browser} browser
  * @param {keyof applicationLinks} applicationLabel
+ * @param {number} delaySec
+ * @param {puppeteer.Page | undefined} [page=undefined]
  */
-async function runForApplication(browser, applicationLabel, delaySec) {
-  await waitForTimeout(delaySec * 1000);
-  console.log(`running application for [${applicationLabel}]`);
-  const link = applicationLinks[applicationLabel];
-  const page = await browser.newPage();
-  await page.evaluate(() => {
-    document.body.style.transform = 'scale(0.75)';
-    document.body.style.transformOrigin = 'top left';
-  });
+async function runForApplication(browser, applicationLabel, delaySec, page) {
+  if (!page) {
+    await waitForTimeout(delaySec * 1000);
+    console.log(`running application for [${applicationLabel}]`);
+    page = await browser.newPage();
+    await page.evaluate(() => {
+      document.body.style.transform = 'scale(0.75)';
+      document.body.style.transformOrigin = 'top left';
+    });
+  }
   try {
-    await page.goto(link);
+    await page.goto(applicationLinks[applicationLabel]);
     const confirmBtn = await page.waitForSelector('.requisition-row button.requisition-confirm-btn', {
       timeout: refreshSpeedSec * 1000,
     });
@@ -117,7 +127,7 @@ async function runForApplication(browser, applicationLabel, delaySec) {
     });
     await page.screenshot({ path: `ss/${applicationLabel}.success.png` });
     await confirmBtn.click();
-    return true;
+    await page.close();
   } catch {
     try {
       console.log(`failed to succeed for [${applicationLabel}] application`);
@@ -133,27 +143,25 @@ async function runForApplication(browser, applicationLabel, delaySec) {
       } else {
         await page.screenshot({ path: `ss/${applicationLabel}.${randomUUID()}.png` });
       }
-      return runForApplication(browser, applicationLabel, delaySec);
+      return runForApplication(browser, applicationLabel, delaySec, page);
     } catch (err) {
       console.error(err);
-      return false;
+      await page.close();
     }
-  } finally {
-    await page.close();
   }
 }
+
 /**
  * @param {puppeteer.Browser} browser
  */
-async function run(browser) {
-  console.log('Started!');
+async function checkAndLogin(browser) {
   const page = await browser.newPage();
-  // console.log('reject all permissions!');
-  // page.on('permissionrequest', (permissionRequest) => {
-  //   console.log('permission request denied. FOR:', permissionRequest.name());
-  //   permissionRequest.deny(); // Deny location requests
-  // });
-  $login: {
+  console.log('reject all permissions!');
+  page.on('permissionrequest', (permissionRequest) => {
+    console.log('permission request denied. FOR:', permissionRequest.name());
+    permissionRequest.deny(); // Deny location requests
+  });
+  try {
     await CookiesLocallyToPage(page);
     await page.goto(initLink);
     console.log('checking for login');
@@ -161,25 +169,31 @@ async function run(browser) {
       needToLogIn: page.waitForSelector('#signinOrCreateAccountBtn'),
       alreadyLoggedIn: page.waitForSelector('#candidate\\ '),
     });
-    if (status === 'alreadyLoggedIn') break $login;
+    if (status === 'alreadyLoggedIn') {
+      console.log('Cookies login was successful.');
+      return;
+    }
     console.log('need to login!');
     await page.goto(loginLink, { waitUntil: 'domcontentloaded' });
     await waitForTimeout(5000);
     $consent_btn: {
       console.log('click on consent btn');
       const btn = await page.waitForSelector('button[data-test-id="consentBtn"]', { timeout: 5000 }).catch(() => null);
-      if (btn) await btn.click();
+      if (btn) {
+        await btn.click();
+        await waitForTimeout(10_000);
+      }
     }
     $email: {
       console.log('filling email...');
-      const input = await page.waitForSelector('input[name="login EmailId"]');
+      const input = await page.waitForSelector('input[data-test-id="input-test-id-login"]');
       await input.type(credentials.email, { delay: 100 });
       const btn = await page.waitForSelector('button[data-test-id="button-next"]');
       await btn.click({ delay: 250 });
     }
     $password: {
       console.log('filling password...');
-      const input = await page.waitForSelector('input[name="pin"]');
+      const input = await page.waitForSelector('input[data-test-id="input-test-id-pin"]');
       await input.type(credentials.password, { delay: 100 });
       const btn = await page.waitForSelector('button[data-test-id="button-next"]');
       await btn.click({ delay: 250 });
@@ -200,24 +214,47 @@ async function run(browser) {
     console.log('waiting for login success');
     await page.waitForSelector('#candidate\\ ');
     await CookiesPageToLocally(page);
-    await page.goto(initLink);
+    console.log('logged in successfully');
+  } finally {
+    page.close();
   }
-  console.log('logged in successfully');
-  const done = await Promise.race(Object.keys(applicationLinks).map((label, i, arr) => runForApplication(browser, label, refreshSpeedSec * i / arr.length)));
-  console.log('Completed:', done);
-  await browser.close();
 }
 
-(async function () {
+/**
+ * @param {puppeteer.Browser} browser
+ */
+async function checkForJobs(browser) {
+  const page = await browser.newPage();
+  try {
+    await page.goto(jobSearch);
+    //
+  } finally {
+    await page.close();
+  }
+}
+
+async function main() {
+  console.log('Started!');
   const browser = await puppeteer.launch({
     defaultViewport: null, // This ensures the viewport matches the window size
     args: ['--window-size=1500,900'], // Sets the window size
     headless: false,
   });
   try {
-    await run(browser);
+    await checkAndLogin(browser);
+    // checkForJobs(browser);
+    await Promise.race(
+      Object.keys(applicationLinks).map((label, i, arr) => {
+        return runForApplication(browser, label, (refreshSpeedSec * i) / arr.length);
+      }),
+    );
+    console.log('Completed Safely');
   } catch (err) {
     console.log(err);
+  } finally {
+    console.log('Closing browser...');
     await browser.close();
   }
-})();
+}
+
+main();
