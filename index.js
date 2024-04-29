@@ -4,7 +4,12 @@ const path = require('path');
 const readline = require('readline');
 const util = require('util');
 const { randomUUID } = require('crypto');
+const playSound = require('play-sound')();
 
+const soundTrack = {
+  noise: path.join(__dirname, 'noise.mp3'),
+  notify: path.join(__dirname, 'notify.mp3'),
+};
 const cookiesPath = path.join(__dirname, 'cookies.json');
 const logPath = path.join(__dirname, 'debug.log');
 const initLink = 'https://hvr-amazon.my.site.com/Dashboard?setlang=en_US';
@@ -20,6 +25,7 @@ const applicationLinks = {
 const credentials = {
   email: 'yachipatel29@gmail.com',
   password: '293125',
+  siNumber: '154-084-404'
 };
 const refreshSpeedSecForApplication = 8;
 const refreshSpeedSecForJobSearch = 5;
@@ -49,6 +55,19 @@ $log: {
   console.error = log;
   console.debug = log;
   console.info = log;
+}
+
+/**
+ * @param {keyof soundTrack} track
+ */
+function playSoundTrack(track) {
+  playSound.play(soundTrack[track], (err) => {
+    if (err) {
+      console.error('Failed to play sound:', err);
+    } else {
+      console.log('Sound played successfully!');
+    }
+  });
 }
 
 /**
@@ -131,7 +150,8 @@ async function runForApplication(browser, applicationLabel, delaySec, page) {
     });
     await page.screenshot({ path: `ss/${applicationLabel}.success.png` });
     await confirmBtn.click();
-    await page.close();
+    playSoundTrack('noise');
+    await Promise.race([]);
   } catch {
     try {
       console.log(`failed to succeed for [${applicationLabel}] application`);
@@ -245,6 +265,7 @@ async function checkForJobs(browser) {
 }
 
 async function main() {
+  playSoundTrack('notify');
   console.log('Started!');
   const browser = await puppeteer.launch({
     defaultViewport: null, // This ensures the viewport matches the window size
