@@ -267,10 +267,11 @@ async function checkForJobs(browser) {
 async function main() {
   playSoundTrack('notify');
   console.log('Started!');
+  const headless = await questionClient('Need to show chrome? (Yes/No): ')
   const browser = await puppeteer.launch({
     defaultViewport: null, // This ensures the viewport matches the window size
     args: ['--window-size=1500,900'], // Sets the window size
-    // headless: false,
+    headless: headless.toLowerCase() === 'y' || headless.toLowerCase() === 'yes' ? false : true,
   });
   try {
     await checkAndLogin(browser);
