@@ -232,7 +232,7 @@ async function checkForJobs(browser) {
   let wasNotFound = true;
   while (true) {
     await waitForTimeout(refreshSpeedSecForJobSearch);
-    await page.goto(jobSearch);
+    await page.goto(jobSearch, { timeout: 60_000 });
     const ele = await page.waitForSelector('h1');
     const notFound = await ele?.evaluate((x) => x.innerText.includes('Sorry, there are no jobs available that match your search'));
     if (notFound) {
