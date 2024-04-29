@@ -21,7 +21,8 @@ const credentials = {
   email: 'yachipatel29@gmail.com',
   password: '293125',
 };
-const refreshSpeedSec = 8;
+const refreshSpeedSecForApplication = 8;
+const refreshSpeedSecForJobSearch = 5;
 
 // - ***** - - ***** - - ***** - - ***** - - ***** - //
 
@@ -85,7 +86,10 @@ async function CookiesPageToLocally(page) {
   const cookies = await page.cookies();
   fs.writeFileSync(cookiesPath, JSON.stringify(cookies, null, '\t'));
 }
-
+/**
+ * @param {number} ms
+ * @returns {Promise<void>}
+ */
 function waitForTimeout(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
@@ -119,7 +123,7 @@ async function runForApplication(browser, applicationLabel, delaySec, page) {
   try {
     await page.goto(applicationLinks[applicationLabel]);
     const confirmBtn = await page.waitForSelector('.requisition-row button.requisition-confirm-btn', {
-      timeout: refreshSpeedSec * 1000,
+      timeout: refreshSpeedSecForApplication * 1000,
     });
     console.log(`found a confirm btn for [${applicationLabel}] application`);
     await page.evaluate(() => {
@@ -137,9 +141,9 @@ async function runForApplication(browser, applicationLabel, delaySec, page) {
       const warningMsg = await page.$('.warning-message-container');
       const text = await warningMsg?.evaluate((ele) => ele.textContent?.trim());
       console.log('site msg for', applicationLabel, '::', text);
-      const isKnown = text?.includes('Sorry, we do not have a shift available that matches your preferences');
-      if (isKnown) {
-        await page.screenshot({ path: `ss/${applicationLabel}.error.png` });
+      const notFound = text?.includes('Sorry, we do not have a shift available that matches your preferences');
+      if (notFound) {
+        // await page.screenshot({ path: `ss/${applicationLabel}.error.png` });
       } else {
         await page.screenshot({ path: `ss/${applicationLabel}.${randomUUID()}.png` });
       }
@@ -225,11 +229,18 @@ async function checkAndLogin(browser) {
  */
 async function checkForJobs(browser) {
   const page = await browser.newPage();
-  try {
+  let wasNotFound = true;
+  while (true) {
+    await waitForTimeout(refreshSpeedSecForJobSearch);
     await page.goto(jobSearch);
-    //
-  } finally {
-    await page.close();
+    const ele = await page.waitForSelector('h1');
+    const notFound = await ele?.evaluate((x) => x.innerText.includes('Sorry, there are no jobs available that match your search'));
+    if (notFound) {
+      // await page.screenshot({ path: 'ss/_JOB-SEARCH.error.png' });
+    } else if (wasNotFound) {
+      await page.screenshot({ path: `ss/_JOB-SEARCH.${randomUUID()}.png` });
+    }
+    wasNotFound = notFound;
   }
 }
 
@@ -238,14 +249,14 @@ async function main() {
   const browser = await puppeteer.launch({
     defaultViewport: null, // This ensures the viewport matches the window size
     args: ['--window-size=1500,900'], // Sets the window size
-    headless: false,
+    // headless: false,
   });
   try {
     await checkAndLogin(browser);
-    // checkForJobs(browser);
+    checkForJobs(browser);
     await Promise.race(
       Object.keys(applicationLinks).map((label, i, arr) => {
-        return runForApplication(browser, label, (refreshSpeedSec * i) / arr.length);
+        return runForApplication(browser, label, (refreshSpeedSecForApplication * i) / arr.length);
       }),
     );
     console.log('Completed Safely');
