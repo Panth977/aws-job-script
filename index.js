@@ -25,7 +25,7 @@ const applicationLinks = {
 const credentials = {
   email: 'yachipatel29@gmail.com',
   password: '293125',
-  siNumber: '154-084-404'
+  siNumber: '154-084-404',
 };
 const refreshSpeedSecForApplication = 8;
 const refreshSpeedSecForJobSearch = 5;
@@ -59,15 +59,20 @@ $log: {
 
 /**
  * @param {keyof soundTrack} track
+ * @returns {Promise<void>}
  */
-function playSoundTrack(track) {
-  playSound.play(soundTrack[track], (err) => {
-    if (err) {
-      console.error('Failed to play sound:', err);
-    } else {
-      console.log('Sound played successfully!');
-    }
+async function playSoundTrack(track) {
+  await new Promise((res, rej) => {
+    playSound.play(soundTrack[track], (err) => {
+      if (err) {
+        rej(err);
+        console.error('Failed to play sound:', err);
+      } else {
+        res();
+      }
+    });
   });
+  console.log('Sound played successfully!');
 }
 
 /**
@@ -150,7 +155,7 @@ async function runForApplication(browser, applicationLabel, delaySec, page) {
     });
     await page.screenshot({ path: `ss/${applicationLabel}.success.png` });
     await confirmBtn.click();
-    playSoundTrack('noise');
+    await playSoundTrack('noise');
     await Promise.race([]);
   } catch {
     try {
@@ -205,7 +210,7 @@ async function checkAndLogin(browser) {
       const btn = await page.waitForSelector('button[data-test-id="consentBtn"]', { timeout: 5000 }).catch(() => null);
       if (btn) {
         await btn.click();
-        await waitForTimeout(10_000);
+        await waitForTimeout(2000);
       }
     }
     $email: {
@@ -250,24 +255,64 @@ async function checkAndLogin(browser) {
 async function checkForJobs(browser) {
   const page = await browser.newPage();
   let wasNotFound = true;
-  while (true) {
-    await waitForTimeout(refreshSpeedSecForJobSearch);
+  console.log('reject all permissions!');
+  page.on('permissionrequest', (permissionRequest) => {
+    console.log('permission request denied. FOR:', permissionRequest.name());
+    permissionRequest.deny(); // Deny location requests
+  });
+  do {
+    console.log('refresh wait...');
+    await waitForTimeout(refreshSpeedSecForJobSearch * 1000);
     await page.goto(jobSearch, { timeout: 60_000 });
-    const ele = await page.waitForSelector('h1');
+    console.log('refresh completed');
+    const ele = await page.waitForSelector('h1').catch(() => null);
+    console.log('ele resolved');
     const notFound = await ele?.evaluate((x) => x.innerText.includes('Sorry, there are no jobs available that match your search'));
+    $consent_btn: {
+      console.log('click on consent btn');
+      const btn = await page.$('button[data-test-id="consentBtn"]');
+      if (btn) {
+        await btn.click();
+        await waitForTimeout(2000);
+      }
+    }
+    $skip: {
+      const btn = await page.$('div[role="button"]:has(svg[data-test-component="StencilIconCross"])');
+      if (btn) {
+        await btn.click();
+        await waitForTimeout(2000);
+      }
+    }
+    // $update_filter: {
+    //   const btn_s = await page.$$('.scrollableHorizontal button');
+    //   const btn = await Promise.all(
+    //     btn_s.map((btn) =>
+    //       btn
+    //         .evaluate((x) => x.innerText.includes('Within')) //
+    //         .then((x) => (x ? btn : null)),
+    //     ),
+    //   )
+    //     //
+    //     .then((x) => x.find((btn) => btn));
+    //   if (btn) {
+    //     btn.click({ delay: 500 });
+    //   }
+    //   await Promise.race([]); // TODO
+    // }
     if (notFound) {
       // await page.screenshot({ path: 'ss/_JOB-SEARCH.error.png' });
     } else if (wasNotFound) {
       await page.screenshot({ path: `ss/_JOB-SEARCH.${randomUUID()}.png` });
+      await playSoundTrack('noise');
     }
     wasNotFound = notFound;
-  }
+  } while (true);
 }
 
 async function main() {
-  playSoundTrack('notify');
+  await playSoundTrack('notify');
   console.log('Started!');
-  const headless = await questionClient('Need to show chrome? (Yes/No): ')
+  const headless = await questionClient('Need to show chrome? (Yes/No): ');
   const browser = await puppeteer.launch({
     defaultViewport: null, // This ensures the viewport matches the window size
     args: ['--window-size=1500,900'], // Sets the window size
@@ -275,12 +320,12 @@ async function main() {
   });
   try {
     await checkAndLogin(browser);
-    checkForJobs(browser);
-    await Promise.race(
-      Object.keys(applicationLinks).map((label, i, arr) => {
-        return runForApplication(browser, label, (refreshSpeedSecForApplication * i) / arr.length);
-      }),
-    );
+    await checkForJobs(browser);
+    // await Promise.race(
+    //   Object.keys(applicationLinks).map((label, i, arr) => {
+    //     return runForApplication(browser, label, (refreshSpeedSecForApplication * i) / arr.length);
+    //   }),
+    // );
     console.log('Completed Safely');
   } catch (err) {
     console.log(err);
