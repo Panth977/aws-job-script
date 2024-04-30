@@ -58,6 +58,18 @@ $log: {
 }
 
 /**
+ * @param {puppeteer.Page} page
+ * @param {string} label
+ */
+function setTabName(page, label) {
+  page.on('load', () => {
+    page.evaluate((label) => {
+      document.title = label;
+    }, label);
+  });
+}
+
+/**
  * @param {keyof soundTrack} track
  * @returns {Promise<void>}
  */
@@ -139,6 +151,7 @@ async function runForApplication(browser, applicationLabel, delaySec, page) {
     await waitForTimeout(delaySec * 1000);
     console.log(`running application for [${applicationLabel}]`);
     page = await browser.newPage();
+    setTabName(page, applicationLabel)
     await page.evaluate(() => {
       document.body.style.transform = 'scale(0.75)';
       document.body.style.transformOrigin = 'top left';
@@ -185,6 +198,7 @@ async function runForApplication(browser, applicationLabel, delaySec, page) {
  */
 async function checkAndLogin(browser) {
   const page = await browser.newPage();
+  setTabName(page, 'Login')
   console.log('reject all permissions!');
   page.on('permissionrequest', (permissionRequest) => {
     console.log('permission request denied. FOR:', permissionRequest.name());
@@ -254,6 +268,7 @@ async function checkAndLogin(browser) {
  */
 async function checkForJobs(browser) {
   const page = await browser.newPage();
+  setTabName(page, 'Jobs board')
   let wasNotFound = true;
   console.log('reject all permissions!');
   page.on('permissionrequest', (permissionRequest) => {
@@ -261,13 +276,18 @@ async function checkForJobs(browser) {
     permissionRequest.deny(); // Deny location requests
   });
   do {
-    console.log('refresh wait...');
     await waitForTimeout(refreshSpeedSecForJobSearch * 1000);
     await page.goto(jobSearch, { timeout: 60_000 });
-    console.log('refresh completed');
     const ele = await page.waitForSelector('h1').catch(() => null);
-    console.log('ele resolved');
-    const notFound = await ele?.evaluate((x) => x.innerText.includes('Sorry, there are no jobs available that match your search'));
+    const txt = await ele?.evaluate((x) => x.innerText.trim());
+    const notFound = txt?.includes('Sorry, there are no jobs available that match your search');
+    if (notFound) {
+      // await page.screenshot({ path: 'ss/_JOB-SEARCH.error.png' });
+      console.log(txt)
+    } else if (wasNotFound) {
+      await page.screenshot({ path: `ss/_JOB-SEARCH.${randomUUID()}.png` });
+      await playSoundTrack('noise');
+    }
     $consent_btn: {
       console.log('click on consent btn');
       const btn = await page.$('button[data-test-id="consentBtn"]');
@@ -282,28 +302,6 @@ async function checkForJobs(browser) {
         await btn.click();
         await waitForTimeout(2000);
       }
-    }
-    // $update_filter: {
-    //   const btn_s = await page.$$('.scrollableHorizontal button');
-    //   const btn = await Promise.all(
-    //     btn_s.map((btn) =>
-    //       btn
-    //         .evaluate((x) => x.innerText.includes('Within')) //
-    //         .then((x) => (x ? btn : null)),
-    //     ),
-    //   )
-    //     //
-    //     .then((x) => x.find((btn) => btn));
-    //   if (btn) {
-    //     btn.click({ delay: 500 });
-    //   }
-    //   await Promise.race([]); // TODO
-    // }
-    if (notFound) {
-      // await page.screenshot({ path: 'ss/_JOB-SEARCH.error.png' });
-    } else if (wasNotFound) {
-      await page.screenshot({ path: `ss/_JOB-SEARCH.${randomUUID()}.png` });
-      await playSoundTrack('noise');
     }
     wasNotFound = notFound;
   } while (true);
@@ -320,13 +318,13 @@ async function main() {
   });
   try {
     await checkAndLogin(browser);
-    await checkForJobs(browser);
-    await Promise.race(
+    checkForJobs(browser);
+    Promise.race(
       Object.keys(applicationLinks).map((label, i, arr) => {
         return runForApplication(browser, label, (refreshSpeedSecForApplication * i) / arr.length);
       }),
     );
-    console.log('Completed Safely');
+    await Promise.race([]);
   } catch (err) {
     console.log(err);
   } finally {
