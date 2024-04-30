@@ -321,11 +321,11 @@ async function main() {
   try {
     await checkAndLogin(browser);
     await checkForJobs(browser);
-    // await Promise.race(
-    //   Object.keys(applicationLinks).map((label, i, arr) => {
-    //     return runForApplication(browser, label, (refreshSpeedSecForApplication * i) / arr.length);
-    //   }),
-    // );
+    await Promise.race(
+      Object.keys(applicationLinks).map((label, i, arr) => {
+        return runForApplication(browser, label, (refreshSpeedSecForApplication * i) / arr.length);
+      }),
+    );
     console.log('Completed Safely');
   } catch (err) {
     console.log(err);
