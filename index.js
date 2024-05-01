@@ -27,8 +27,9 @@ const credentials = {
   password: '293125',
   siNumber: '154-084-404',
 };
-const refreshSpeedSecForApplication = 8;
-const refreshSpeedSecForJobSearch = 5;
+let refreshSpeedSecForApplication;
+let refreshSpeedSecForJobSearch;
+let headless;
 
 // - ***** - - ***** - - ***** - - ***** - - ***** - //
 
@@ -305,37 +306,41 @@ async function checkForJobs(browser) {
       }
     }
     wasNotFound = notFound;
-  await page.reload({ timeout: 60_000 });
+    await page.reload({ timeout: 60_000 });
   } while (true);
 }
-let headless;
 async function main() {
   await playSoundTrack('notify');
   console.log('Started!');
-  headless ??= await questionClient('Need to show chrome? (Yes/No): ').then((headless) =>
-    headless.toLowerCase() === 'y' || headless.toLowerCase() === 'yes' ? false : true,
-  );
+  headless ??= await questionClient('Need to show chrome? (in Yes/No): [default=Yes]: ')
+    .then((x) => x || 'Yes')
+    .then((headless) => (headless.toLowerCase() === 'y' || headless.toLowerCase() === 'yes' ? false : true));
+  refreshSpeedSecForApplication ??= await questionClient('Refresh speed for application form? (in x Sec) [default=8]: ')
+    .then((x) => x || '8')
+    .then(parseInt);
+  refreshSpeedSecForJobSearch ??= await questionClient('Refresh speed for job search board? (in x Sec) [default=5]: ')
+    .then((x) => x || '5')
+    .then(parseInt);
+  console.debug('Values: ', { headless, refreshSpeedSecForApplication, refreshSpeedSecForJobSearch });
   const browser = await puppeteer.launch({
     defaultViewport: null, // This ensures the viewport matches the window size
     args: ['--window-size=1500,900'], // Sets the window size
     headless: headless,
   });
-  try {
-    await checkAndLogin(browser);
-    checkForJobs(browser);
-    Promise.race(
-      Object.keys(applicationLinks).map((label, i, arr) => {
-        return runForApplication(browser, label, (refreshSpeedSecForApplication * i) / arr.length);
-      }),
-    );
-    await Promise.race([]);
-    console.log('Closing browser...');
-    await browser.close();
-  } catch (err) {
-    await playSoundTrack('noise');
-    console.log(err);
-    return main();
-  }
+  await checkAndLogin(browser);
+  checkForJobs(browser);
+  Promise.race(
+    Object.keys(applicationLinks).map((label, i, arr) => {
+      return runForApplication(browser, label, (refreshSpeedSecForApplication * i) / arr.length);
+    }),
+  );
+  await Promise.race([]);
+  console.log('Closing browser...');
+  await browser.close();
 }
 
-main();
+main().catch(async (err) => {
+  await playSoundTrack('noise');
+  console.log(err);
+  setImmediate(main);
+});
