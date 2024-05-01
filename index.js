@@ -151,7 +151,7 @@ async function runForApplication(browser, applicationLabel, delaySec, page) {
     await waitForTimeout(delaySec * 1000);
     console.log(`running application for [${applicationLabel}]`);
     page = await browser.newPage();
-    setTabName(page, applicationLabel)
+    setTabName(page, applicationLabel);
     await page.evaluate(() => {
       document.body.style.transform = 'scale(0.75)';
       document.body.style.transformOrigin = 'top left';
@@ -198,7 +198,7 @@ async function runForApplication(browser, applicationLabel, delaySec, page) {
  */
 async function checkAndLogin(browser) {
   const page = await browser.newPage();
-  setTabName(page, 'Login')
+  setTabName(page, 'Login');
   console.log('reject all permissions!');
   page.on('permissionrequest', (permissionRequest) => {
     console.log('permission request denied. FOR:', permissionRequest.name());
@@ -268,30 +268,30 @@ async function checkAndLogin(browser) {
  */
 async function checkForJobs(browser) {
   const page = await browser.newPage();
-  setTabName(page, 'Jobs board')
+  setTabName(page, 'Jobs board');
   let wasNotFound = true;
   console.log('reject all permissions!');
   page.on('permissionrequest', (permissionRequest) => {
     console.log('permission request denied. FOR:', permissionRequest.name());
     permissionRequest.deny(); // Deny location requests
   });
+  await page.goto(jobSearch, { timeout: 60_000 });
   do {
     await waitForTimeout(refreshSpeedSecForJobSearch * 1000);
-    await page.goto(jobSearch, { timeout: 60_000 });
     const ele = await page.waitForSelector('h1').catch(() => null);
     const txt = await ele?.evaluate((x) => x.innerText.trim());
     const notFound = txt?.includes('Sorry, there are no jobs available that match your search');
     if (notFound) {
       // await page.screenshot({ path: 'ss/_JOB-SEARCH.error.png' });
-      console.log(txt)
+      console.log(txt);
     } else if (wasNotFound) {
       await page.screenshot({ path: `ss/_JOB-SEARCH.${randomUUID()}.png` });
       await playSoundTrack('noise');
     }
     $consent_btn: {
-      console.log('click on consent btn');
       const btn = await page.$('button[data-test-id="consentBtn"]');
       if (btn) {
+        console.log('click on consent btn...');
         await btn.click();
         await waitForTimeout(2000);
       }
@@ -299,22 +299,26 @@ async function checkForJobs(browser) {
     $skip: {
       const btn = await page.$('div[role="button"]:has(svg[data-test-component="StencilIconCross"])');
       if (btn) {
+        console.log('click on skip btn...');
         await btn.click();
         await waitForTimeout(2000);
       }
     }
     wasNotFound = notFound;
+  await page.reload({ timeout: 60_000 });
   } while (true);
 }
-
+let headless;
 async function main() {
   await playSoundTrack('notify');
   console.log('Started!');
-  const headless = await questionClient('Need to show chrome? (Yes/No): ');
+  headless ??= await questionClient('Need to show chrome? (Yes/No): ').then((headless) =>
+    headless.toLowerCase() === 'y' || headless.toLowerCase() === 'yes' ? false : true,
+  );
   const browser = await puppeteer.launch({
     defaultViewport: null, // This ensures the viewport matches the window size
     args: ['--window-size=1500,900'], // Sets the window size
-    headless: headless.toLowerCase() === 'y' || headless.toLowerCase() === 'yes' ? false : true,
+    headless: headless,
   });
   try {
     await checkAndLogin(browser);
@@ -325,11 +329,12 @@ async function main() {
       }),
     );
     await Promise.race([]);
-  } catch (err) {
-    console.log(err);
-  } finally {
     console.log('Closing browser...');
     await browser.close();
+  } catch (err) {
+    await playSoundTrack('noise');
+    console.log(err);
+    return main();
   }
 }
 
