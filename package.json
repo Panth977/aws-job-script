@@ -5,7 +5,7 @@
   "main": "index.js",
   "bin": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node start.js",
     "build": "pkg ."
   },
   "keywords": [],
@@ -21,5 +21,8 @@
   "dependencies": {
     "play-sound": "^1.1.6",
     "puppeteer": "^22.7.1"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
   }
 }

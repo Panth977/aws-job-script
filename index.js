@@ -27,9 +27,9 @@ const credentials = {
   password: '293125',
   siNumber: '154-084-404',
 };
-let refreshSpeedSecForApplication;
-let refreshSpeedSecForJobSearch;
-let headless;
+const refreshSpeedSecForApplication = 8;
+const refreshSpeedSecForJobSearch = 5;
+const headless = false;
 
 // - ***** - - ***** - - ***** - - ***** - - ***** - //
 
@@ -92,14 +92,17 @@ async function playSoundTrack(track) {
  * @param {string} question
  * @returns {Promise<string>}
  */
-async function questionClient(question) {
+async function questionClient(question, timeout) {
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
   });
-  const answer = await new Promise((resolve) => {
-    rl.question(question, resolve);
-  });
+  const answer = Promise.race([
+    timeout ? waitForTimeout(timeout).then(() => '') : Promise.race([]),
+    await new Promise((resolve) => {
+      rl.question(question, resolve);
+    }),
+  ]);
   rl.close();
   return answer;
 }
@@ -309,19 +312,10 @@ async function checkForJobs(browser) {
     await page.reload({ timeout: 60_000 });
   } while (true);
 }
+
 async function main() {
   await playSoundTrack('notify');
   console.log('Started!');
-  headless ??= await questionClient('Need to show chrome? (in Yes/No): [default=Yes]: ')
-    .then((x) => x || 'Yes')
-    .then((headless) => (headless.toLowerCase() === 'y' || headless.toLowerCase() === 'yes' ? false : true));
-  refreshSpeedSecForApplication ??= await questionClient('Refresh speed for application form? (in x Sec) [default=8]: ')
-    .then((x) => x || '8')
-    .then(parseInt);
-  refreshSpeedSecForJobSearch ??= await questionClient('Refresh speed for job search board? (in x Sec) [default=5]: ')
-    .then((x) => x || '5')
-    .then(parseInt);
-  console.debug('Values: ', { headless, refreshSpeedSecForApplication, refreshSpeedSecForJobSearch });
   const browser = await puppeteer.launch({
     defaultViewport: null, // This ensures the viewport matches the window size
     args: ['--window-size=1500,900'], // Sets the window size
@@ -339,8 +333,4 @@ async function main() {
   await browser.close();
 }
 
-main().catch(async (err) => {
-  await playSoundTrack('noise');
-  console.log(err);
-  setImmediate(main);
-});
+main();
